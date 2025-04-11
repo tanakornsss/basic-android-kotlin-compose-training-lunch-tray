@@ -15,6 +15,7 @@
  */
 package com.example.lunchtray
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -22,8 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -45,8 +46,11 @@ enum class LunchTrayScreen {
     Checkout,
 }
 
-
 // TODO: AppBar
+@Composable
+fun LaunchTrayAppBar() {
+
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,46 +67,50 @@ fun LunchTrayApp(
 
         // TODO: Make the button to actually go somewhere.
 
-        NavHost(
-            navController = navController,
-            startDestination = LunchTrayScreen.StartOrder.name,
-            modifier = Modifier.padding(innerPadding)
+        Column(
+            modifier = Modifier.padding(horizontal = 10.dp)
         ) {
-            composable(route = LunchTrayScreen.StartOrder.name) {
-                StartOrderScreen(
-                    onStartOrderButtonClicked = { },
-                )
-            }
-            composable(route = LunchTrayScreen.EntreeMenu.name) {
-                EntreeMenuScreen(
-                    options = DataSource.entreeMenuItems,
-                    onCancelButtonClicked = { },
-                    onNextButtonClicked = { },
-                    onSelectionChanged = { },
-                )
-            }
-            composable(route = LunchTrayScreen.SideDish.name) {
-                SideDishMenuScreen(
-                    options = DataSource.sideDishMenuItems,
-                    onCancelButtonClicked = { },
-                    onNextButtonClicked = { },
-                    onSelectionChanged = { },
-                )
-            }
-            composable(route = LunchTrayScreen.AccompanistMenu.name) {
-                AccompanimentMenuScreen(
-                    options = DataSource.accompanimentMenuItems,
-                    onCancelButtonClicked = { },
-                    onNextButtonClicked = { },
-                    onSelectionChanged = { },
-                )
-            }
-            composable(route = LunchTrayScreen.Checkout.name) {
-                CheckoutScreen(
-                    orderUiState = uiState,
-                    onNextButtonClicked = { },
-                    onCancelButtonClicked = { },
-                )
+            NavHost(
+                navController = navController,
+                startDestination = LunchTrayScreen.StartOrder.name,
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                composable(route = LunchTrayScreen.StartOrder.name) {
+                    StartOrderScreen(
+                        onStartOrderButtonClicked = { },
+                    )
+                }
+                composable(route = LunchTrayScreen.EntreeMenu.name) {
+                    EntreeMenuScreen(
+                        options = DataSource.entreeMenuItems,
+                        onCancelButtonClicked = { },
+                        onNextButtonClicked = { },
+                        onSelectionChanged = { },
+                    )
+                }
+                composable(route = LunchTrayScreen.SideDish.name) {
+                    SideDishMenuScreen(
+                        options = DataSource.sideDishMenuItems,
+                        onCancelButtonClicked = { },
+                        onNextButtonClicked = { },
+                        onSelectionChanged = { },
+                    )
+                }
+                composable(route = LunchTrayScreen.AccompanistMenu.name) {
+                    AccompanimentMenuScreen(
+                        options = DataSource.accompanimentMenuItems,
+                        onCancelButtonClicked = { },
+                        onNextButtonClicked = { },
+                        onSelectionChanged = { },
+                    )
+                }
+                composable(route = LunchTrayScreen.Checkout.name) {
+                    CheckoutScreen(
+                        orderUiState = uiState,
+                        onNextButtonClicked = { },
+                        onCancelButtonClicked = { },
+                    )
+                }
             }
         }
     }
