@@ -88,7 +88,6 @@ fun LunchTrayApp(
     ) { innerPadding ->
         val uiState by viewModel.uiState.collectAsState()
 
-        // TODO: Make the button to actually go somewhere.
         Column(
             modifier = Modifier.padding(horizontal = 10.dp)
         ) {
@@ -107,36 +106,54 @@ fun LunchTrayApp(
                 composable(route = LunchTrayScreen.EntreeMenu.name) {
                     EntreeMenuScreen(
                         options = DataSource.entreeMenuItems,
-                        onCancelButtonClicked = { cancelOrderAndReturnToStart(navController) },
+                        onCancelButtonClicked = { cancelOrderAndReturnToStart(
+                            navController,
+                            viewModel = viewModel
+                        ) },
                         onNextButtonClicked = {
                             navController.navigate(LunchTrayScreen.SideDish.name)
                         },
-                        onSelectionChanged = { },
+                        onSelectionChanged = {
+                            viewModel.updateEntree(it)
+                        },
                     )
                 }
                 composable(route = LunchTrayScreen.SideDish.name) {
                     SideDishMenuScreen(
                         options = DataSource.sideDishMenuItems,
-                        onCancelButtonClicked = { cancelOrderAndReturnToStart(navController) },
+                        onCancelButtonClicked = { cancelOrderAndReturnToStart(
+                            navController,
+                            viewModel = viewModel
+                        ) },
                         onNextButtonClicked = {
                             navController.navigate(LunchTrayScreen.AccompanistMenu.name)
                         },
-                        onSelectionChanged = { },
+                        onSelectionChanged = {
+                            viewModel.updateSideDish(it)
+                        },
                     )
                 }
                 composable(route = LunchTrayScreen.AccompanistMenu.name) {
                     AccompanimentMenuScreen(
                         options = DataSource.accompanimentMenuItems,
-                        onCancelButtonClicked = { cancelOrderAndReturnToStart(navController) },
+                        onCancelButtonClicked = { cancelOrderAndReturnToStart(
+                            navController,
+                            viewModel = viewModel
+                        ) },
                         onNextButtonClicked = { navController.navigate(LunchTrayScreen.Checkout.name) },
-                        onSelectionChanged = { },
+                        onSelectionChanged = {
+                            viewModel.updateAccompaniment(it)
+                        },
                     )
                 }
                 composable(route = LunchTrayScreen.Checkout.name) {
                     CheckoutScreen(
                         orderUiState = uiState,
                         onNextButtonClicked = { },
-                        onCancelButtonClicked = { cancelOrderAndReturnToStart(navController) },
+                        onCancelButtonClicked = { cancelOrderAndReturnToStart(
+                            navController,
+                            viewModel = viewModel
+                        ) },
                     )
                 }
             }
@@ -146,6 +163,8 @@ fun LunchTrayApp(
 
 private fun cancelOrderAndReturnToStart(
     navController: NavController,
+    viewModel: OrderViewModel
 ) {
+    viewModel.resetOrder()
     navController.popBackStack(LunchTrayScreen.StartOrder.name, inclusive = false)
 }
