@@ -15,16 +15,25 @@
  */
 package com.example.lunchtray
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -46,10 +55,24 @@ enum class LunchTrayScreen {
     Checkout,
 }
 
-// TODO: AppBar
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LaunchTrayAppBar() {
-
+fun LunchTrayAppBar() {
+    TopAppBar(
+        title = {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(R.string.app_name),
+                )
+            }
+            Spacer(
+                modifier = Modifier.height(50.dp)
+            )
+        },
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,13 +83,12 @@ fun LunchTrayApp(
 ) {
     Scaffold(
         topBar = {
-            // TODO: AppBar
+            LunchTrayAppBar()
         }
     ) { innerPadding ->
         val uiState by viewModel.uiState.collectAsState()
 
         // TODO: Make the button to actually go somewhere.
-
         Column(
             modifier = Modifier.padding(horizontal = 10.dp)
         ) {
@@ -77,30 +99,36 @@ fun LunchTrayApp(
             ) {
                 composable(route = LunchTrayScreen.StartOrder.name) {
                     StartOrderScreen(
-                        onStartOrderButtonClicked = { },
+                        onStartOrderButtonClicked = {
+                            navController.navigate(LunchTrayScreen.EntreeMenu.name)
+                        },
                     )
                 }
                 composable(route = LunchTrayScreen.EntreeMenu.name) {
                     EntreeMenuScreen(
                         options = DataSource.entreeMenuItems,
-                        onCancelButtonClicked = { },
-                        onNextButtonClicked = { },
+                        onCancelButtonClicked = { cancelOrderAndReturnToStart(navController) },
+                        onNextButtonClicked = {
+                            navController.navigate(LunchTrayScreen.SideDish.name)
+                        },
                         onSelectionChanged = { },
                     )
                 }
                 composable(route = LunchTrayScreen.SideDish.name) {
                     SideDishMenuScreen(
                         options = DataSource.sideDishMenuItems,
-                        onCancelButtonClicked = { },
-                        onNextButtonClicked = { },
+                        onCancelButtonClicked = { cancelOrderAndReturnToStart(navController) },
+                        onNextButtonClicked = {
+                            navController.navigate(LunchTrayScreen.AccompanistMenu.name)
+                        },
                         onSelectionChanged = { },
                     )
                 }
                 composable(route = LunchTrayScreen.AccompanistMenu.name) {
                     AccompanimentMenuScreen(
                         options = DataSource.accompanimentMenuItems,
-                        onCancelButtonClicked = { },
-                        onNextButtonClicked = { },
+                        onCancelButtonClicked = { cancelOrderAndReturnToStart(navController) },
+                        onNextButtonClicked = { navController.navigate(LunchTrayScreen.Checkout.name) },
                         onSelectionChanged = { },
                     )
                 }
@@ -108,10 +136,16 @@ fun LunchTrayApp(
                     CheckoutScreen(
                         orderUiState = uiState,
                         onNextButtonClicked = { },
-                        onCancelButtonClicked = { },
+                        onCancelButtonClicked = { cancelOrderAndReturnToStart(navController) },
                     )
                 }
             }
         }
     }
+}
+
+private fun cancelOrderAndReturnToStart(
+    navController: NavController,
+) {
+    navController.popBackStack(LunchTrayScreen.StartOrder.name, inclusive = false)
 }
